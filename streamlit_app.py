@@ -29,7 +29,7 @@ ss["gender"] = s["gender"]
 ss["age"] = s["age"].where(s["age"] <= 98)
 
 # Drop rows with missing values
-ss = ss.dropna().reset_index(drop=True)
+ss = ss.dropna()
 
 #Q4 create a target vector (y) and feature set (X)
 
@@ -68,20 +68,25 @@ col1, col2 = st.columns(2)
 with col1:
     with st.container():
         st.markdown("### Profile Characteristics")
-        income = st.slider("Income (1–9)", 1, 9, 8)
-        education = st.slider("Education (1–8)", 1, 8, 7)
-        parent = st.checkbox("Parent?", value=False)
-        married = st.checkbox("Married?", value=True)
-        female = st.checkbox("Female?", value=True)
+        income = st.slider("**Income (1-9)**", 1, 9, 8,
+        help= ("**Income Tier (1-9):**  \n"  
+                  "1: < $10k–$20k | 2: $20k–$30k | 3: $30k–$40k | 4: $40k–$50k |  \n"   
+                  "5: $50k–$60k | 6: $75k–$100k | 7: $100k–$150k | 8: $100k–$150k | 9: > $150k  \n" ))
+        education = st.slider("**Education (1–8)**", 1, 8, 7,
+        help= ("**Education Code (1-8):**  \n"  
+                  "1: <HS | 2: HS incomplete | 3: HS grad/GED | 4: Some college |  \n"  
+                  "5: AA/AS | 6: BA/BS | 7: Some grad school | 8: Grad/Prof degree  \n"))
+        parent = st.checkbox("**Parent?**", value=False)
+        married = st.checkbox("**Married?**", value=True)
+        female = st.checkbox("**Female?**", value=True)
  
-        
 with col2:
     with st.container():
         st.markdown("### Prediction Settings")
-        age1 = st.slider("Age of person 1", 18, 98, 42)
-        age2 = st.slider("Age of person 2", 18, 98, 82)
+        age1 = st.slider("**Age (Person 1)**", 18, 98, 42)
+        age2 = st.slider("**Age (Person 2)**", 18, 98, 82)
         user_decision = st.slider(
-        "LinkedIn User Classification",
+        "**LinkedIn User (Classification)**",
         min_value=0.10,
         max_value=0.90,
         value=0.50,
@@ -109,7 +114,7 @@ person2 = pd.DataFrame([{
 }])[feature_cols]
 
 # Button: Calculates probability and runs the chart.
-if st.button("Run LinkedIn prediction for both ages"):
+if st.button("Run LinkedIn predictions"):
 
 # Person 1 prob. and user decision calc.
     prob1 = log_reg.predict_proba(person1)[:, 1][0]
