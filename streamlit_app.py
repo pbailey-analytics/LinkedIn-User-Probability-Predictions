@@ -1,4 +1,4 @@
-#import packages here....
+#imported packages
 import pandas as pd
 import numpy as np
 import streamlit as st
@@ -8,10 +8,10 @@ import altair as alt
 
 st.set_page_config(page_title="LinkedIn Use Probability",layout= "wide")
 
-#1) Read in the data, call the dataframe "s"  and check the dimensions of the dataframe
+# Read in the data
 s = pd.read_csv("social_media_usage.csv")
 
-#2) create function
+# create function
 def clean_sm(x):
     x = np.where(x ==1,1,0)
     return x
@@ -31,15 +31,14 @@ ss["age"] = s["age"].where(s["age"] <= 98)
 # Drop rows with missing values
 ss = ss.dropna()
 
-#Q4 create a target vector (y) and feature set (X)
-
+#create a target vector (y) and feature set (X)
 # Target
 y = ss["sm_li"]
 
 #feature set
 X = ss[["income","educ2","par","marital","gender","age"]]
 
-# Split into training and test sets (80/20), stratify on sm_li
+# Split into training and test sets (80/20)
 X_train, X_test,y_train, y_test, = train_test_split(
     X,
     y,
@@ -47,7 +46,7 @@ X_train, X_test,y_train, y_test, = train_test_split(
     random_state=385,
     stratify=y)
 
-# Instantiate logistic regression with class_weight balanced
+# Instantiate logistic regression
 log_reg = LogisticRegression(
     class_weight="balanced",
     random_state=385,   
@@ -57,12 +56,14 @@ log_reg.fit(X_train, y_train)
 
 feature_cols = X_train.columns
 
-# Q9 – Scenario predictions using fitted model updated for Streamlit.
-
+# Scenario predictions using fitted model
+st.sidebar.markdown(
+    "### Deployed Model On Streamlit Cloud\n"
+    "[Open Streamlit Cloud Version Here](https://linkedin-user-probability-predictions-5g9ppd8x8nveznpkn3bnse.streamlit.app/)"
+)
 st.title("LinkedIn User Probability Predictions")
 
 col1, col2 = st.columns(2)
-
 
 # 1. Inputs
 with col1:
@@ -70,8 +71,8 @@ with col1:
         st.markdown("### Profile Characteristics")
         income = st.slider("**Income (1-9)**", 1, 9, 8,
         help= ("**Income Tier (1-9):**  \n"  
-                  "1: < $10k–$20k | 2: $20k–$30k | 3: $30k–$40k | 4: $40k–$50k |  \n"   
-                  "5: $50k–$60k | 6: $75k–$100k | 7: $100k–$150k | 8: $100k–$150k | 9: > $150k  \n" ))
+                  "1: < $10k | 2: < $10k–$20k | 3: $20k–$30k | 4: $30k–$40k | 5: $40k–$50k |  \n"   
+                  "6: $50k–$60k | 7: $75k–$100k | 8: $100k–$150k | 9: > $150k  \n" ))
         education = st.slider("**Education (1–8)**", 1, 8, 7,
         help= ("**Education Code (1-8):**  \n"  
                   "1: <HS | 2: HS incomplete | 3: HS grad/GED | 4: Some college |  \n"  
@@ -112,8 +113,7 @@ person2 = pd.DataFrame([{
     "gender": female,
     "age": age2
 }])[feature_cols]
-
-# Button: Calculates probability and runs the chart.
+ 
 if st.button("Run LinkedIn predictions"):
 
 # Person 1 prob. and user decision calc.
@@ -140,6 +140,7 @@ if st.button("Run LinkedIn predictions"):
 
     st.subheader("Probability of LinkedIn Use by Age")
 
+#bar graph chart
     chart_df = pd.DataFrame({
             "Age": [age1, age2],
             "Probability (%)": [prob1 * 100, prob2 * 100],})
